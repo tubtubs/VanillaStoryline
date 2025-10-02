@@ -2583,14 +2583,26 @@ function storyline:EnableModelManipulation()
 	storyline.Player.PlayerFrame:EnableMouse(1)
 	storyline.Player.PlayerFrame:EnableMouseWheel(1)
 	storyline.Player.PlayerFrame:SetScript('OnMouseWheel', function(self, spining)
-        local Z, X, Y = storyline.Player.PlayerFrame:GetPosition()
-        Z = (arg1 > 0 and Z + 1 or Z - 1)
+        --local Z, X, Y = storyline.Player.PlayerFrame:GetPosition()
+        --Z = (arg1 > 0 and Z + 1 or Z - 1)
 
-		storyline.Player.PlayerFrame:SetPosition(Z, X, Y)
+		--storyline.Player.PlayerFrame:SetPosition(Z, X, Y)
+		local s = storyline.Player.PlayerFrame:GetModelScale()
+        s = (arg1 > 0 and s + 0.01 or s - 0.01)
+		DEFAULT_CHAT_FRAME:AddMessage(format("Scale: %s",s))
+
+		storyline.Player.PlayerFrame:SetModelScale(s)
     end)
 	
 	storyline.Player.PlayerFrame:SetScript('OnMouseUp', function(self)
         storyline.Player.PlayerFrame:SetScript('OnUpdate', nil)
+		Z, X, Y = storyline.Player.PlayerFrame:GetPosition(Z, X, Y)
+		facing=storyline.Player.PlayerFrame:GetFacing()
+		model=storyline.Player.PlayerFrame:GetModel()
+		model = string.gsub(model,"\\","\\\\")
+		scale = storyline.Player.PlayerFrame:GetModelScale()
+		--Output for easy model placement
+		DEFAULT_CHAT_FRAME:AddMessage(format('["%s"]={f=%s,z=%s,y=%s,x=%s,s=%s}', model, facing,Z,Y,X,scale))
     end)
 	
 	storyline.Player.PlayerFrame:SetScript('OnMouseDown', function()
@@ -2625,14 +2637,26 @@ function storyline:EnableModelManipulation()
 	storyline.NPC.PlayerFrame:EnableMouse(1)
 	storyline.NPC.PlayerFrame:EnableMouseWheel(1)
 	storyline.NPC.PlayerFrame:SetScript('OnMouseWheel', function(self, spining)
-        local Z, X, Y = storyline.NPC.PlayerFrame:GetPosition()
-        Z = (arg1 > 0 and Z + 1 or Z - 1)
+        --local Z, X, Y = storyline.NPC.PlayerFrame:GetPosition()
+		-- Z = (arg1 > 0 and Z + 1 or Z - 1)
+		-- storyline.NPC.PlayerFrame:SetPosition(Z, X, Y)
 
-		storyline.NPC.PlayerFrame:SetPosition(Z, X, Y)
+		local s = storyline.NPC.PlayerFrame:GetModelScale()
+        s = (arg1 > 0 and s + 0.01 or s - 0.01)
+		DEFAULT_CHAT_FRAME:AddMessage(format("Scale: %s",s))
+
+		storyline.NPC.PlayerFrame:SetModelScale(s)
     end)
 	
 	storyline.NPC.PlayerFrame:SetScript('OnMouseUp', function(self)
         storyline.NPC.PlayerFrame:SetScript('OnUpdate', nil)
+		Z, X, Y = storyline.NPC.PlayerFrame:GetPosition(Z, X, Y)
+		facing=storyline.NPC.PlayerFrame:GetFacing()
+		model=storyline.NPC.PlayerFrame:GetModel()
+		model = string.gsub(model,"\\","\\\\")
+		scale = storyline.NPC.PlayerFrame:GetModelScale()
+		--Output for easy model placement
+		DEFAULT_CHAT_FRAME:AddMessage(format('["%s"]={f=%s,z=%s,y=%s,x=%s,s=%s}', model, facing,Z,Y,X,scale))
     end)
 	
 	storyline.NPC.PlayerFrame:SetScript('OnMouseDown', function()
@@ -2698,12 +2722,11 @@ function storyline:UpdateModels()
 
 	-- Model scale Fixes for uncommon creatures
 	local model = storyline.NPC.PlayerFrame:GetModel()
+	--DEFAULT_CHAT_FRAME:AddMessage(model)
 	-- Creature\GnomeSpidertank\GnomeBot.mdx
 	-- individual model position fix
 	if model == "Interface\\Buttons\\talktomequestionmark" then storyline.NPC.PlayerFrame:SetPosition(0,0.9,0);storyline.NPC.PlayerFrame:SetModelScale(2) -- ok with scalebug
 	elseif model == "Creature\\GnomeSpidertank\\GnomeBot" then storyline.NPC.PlayerFrame:SetPosition(-4,-5.4,0);storyline.NPC.PlayerFrame:SetModelScale(0.6) -- ok with scalebug		
-		-- Onu from Darkshore used to test
-	elseif model == "Creature\\AncientOfLore\\AncientofLore" then storyline.NPC.PlayerFrame:SetPosition(0,2.0,3.9);storyline.NPC.PlayerFrame:SetModelScale(0.35) -- ok with scalebug
 		--Screecher spirits
 	elseif model == "Creature\\WindSerpent\\WindSerpent" then storyline.NPC.PlayerFrame:SetPosition(0,0.5,1.0) 
 		--Spirit healer
@@ -2731,7 +2754,7 @@ function storyline:UpdateModels()
 	elseif model == "Creature\\HighElf\\HighElfFemale_Warrior" then storyline.NPC.PlayerFrame:SetPosition(-0.9,0.8,0) -- ok
 	elseif model == "Character\\Goblin\\Female\\GoblinFemale" then storyline.NPC.PlayerFrame:SetPosition(0,0.4,0.05);storyline.NPC.PlayerFrame:SetModelScale(0.5) --ok
 	elseif model == "Character\\Goblin\\Male\\GoblinMale" then storyline.NPC.PlayerFrame:SetPosition(0,0.4,0.05);storyline.NPC.PlayerFrame:SetModelScale(0.5) -- ok
-	elseif model == "Creature\\Ghost\\Ghost" then storyline.NPC.PlayerFrame:SetPosition(0,0.5,1.9);storyline.NPC.PlayerFrame:SetModelScale(0.8) -- ok with scalebug
+
 	elseif model == "Creature\\LostOne\\LostOne" then storyline.NPC.PlayerFrame:SetPosition(0,0,0.7);storyline.NPC.PlayerFrame:SetModelScale(0.95) -- ok with scalebug
 	elseif model == "Creature\\FleshGolem\\FleshGolem" then storyline.NPC.PlayerFrame:SetPosition(0,0.4,2);storyline.NPC.PlayerFrame:SetModelScale(0.85-(StorylineOptions.WindowScale-1))-- ok with scalebug
 	elseif model == "Creature\\Dreadlord\\DreadLord" then storyline.NPC.PlayerFrame:SetPosition(0,1.5,6.2);storyline.NPC.PlayerFrame:SetModelScale(1-(StorylineOptions.WindowScale-1)) -- ok with big scalebug
@@ -2748,8 +2771,135 @@ function storyline:UpdateModels()
 	elseif model == "Creature\\Infernal\\Infernal" then storyline.NPC.PlayerFrame:SetPosition(0,0.6,1.2	);storyline.NPC.PlayerFrame:SetModelScale(0.8-(StorylineOptions.WindowScale-1)) -- ok	with scalebug
 	elseif model == "Creature\\Kodobeast\\KodoBeastPack" then storyline.NPC.PlayerFrame:SetPosition(0,0.2,2.6);storyline.NPC.PlayerFrame:SetModelScale(0.4) -- ok with scalebug
 	elseif model == "Creature\\DragonSpawn\\DragonSpawn" then storyline.NPC.PlayerFrame:SetPosition(0,2,1);storyline.NPC.PlayerFrame:SetModelScale(0.9-(StorylineOptions.WindowScale-1)) -- ok with scalebug
-	end
+end
 
+	--Model as tag, facing, z,y,x, scale
+	NPCModels={
+		["Creature\\BogBeast\\BogBeast"]={f=-0.80000001192093,z=0,y=0.71370393037796,x=0.71061861515045,s=0.67000007629395},
+		["Creature\\Centaur\\Centaur"]={f=-0.80000001192093,z=0,y=0.80851864814758,x=1.2320976257324,s=0.72000002861023},
+		["Creature\\furbolg\\Furbolg"]={f=-0.80000001192093,z=0,y=0.17642173171043,x=0.58419847488403,s=0.59000015258789},
+		["Creature\\Ghost\\Ghost"]={f=-1.009148478508,z=0,y=1.1245682239532,x=0.53679227828979,s=0.75},
+		["Creature\\Gnoll\\gnoll"]={f=-0.8418276309967,z=0,y=-0.052837241441011,x=0.6580263376236,s=1.0499999523163},
+		["Creature\\Infernal\\Infernal"]={f=-0.84183174371719,z=0,y=1.1209868192673,x=0.2207396030426,s=0.49000030755997},
+		["Creature\\KeeperOfTheGrove\\KeeperOfTheGrove"]={f=-0.80000001192093,z=0,y=1.2667911052704,x=-0.71160316467285,s=0.54000020027161},
+		["Creature\\LostOne\\LostOne"]={f=-0.80000001192093,z=0,y=0.52617287635803,x=0.015801552683115,s=0.81000012159348},
+		["Creature\\Ogre\\Ogre"]={f=-0.80000001192093,z=0,y=0.18419690430164,x=0.58419692516327,s=0.8899998664856}, 
+		["Creature\\Ogre\\OgreMage"]={f=-0.80000001192093,z=0,y=0.09740774333477,x=0.60000157356262,s=0.93999981880188}, 
+		["Creature\\SeaGiant\\SeaGiant"]={f=-0.80000001192093,z=0,y=2.4361715316772,x=0.63160473108292,s=0.39000034332275},
+		["Creature\\Succubus\\Succubus"]={f=0.015684198588133,z=0,y=0.1290128827095,x=0.72642010450363,s=0.75999999046326},
+		["Creature\\Troglodyte\\Troglodyte"]={f=-0.80000001192093,z=0,y=0.14481316506863,x=0.80542945861816,s=0.71000003814697},
+		["Creature\\Wolf\\Wolf"]={f=-0.80000001192093,z=0,y=0.3028364777565,x=0.63160312175751,s=0.40000033378601},
+		["Creature\\Ghoul\\Ghoul"]={f=-0.80000001192093,z=0,y=0.55567991733551,x=0.88444340229034,s=0.79999995231628},
+		["Creature\\DragonSpawn\\DragonSpawn"]={f=-0.80000001192093,z=0,y=0.84197676181793,x=1.2414791584015,s=0.66000020503998},
+		["Character\\Human\\Male\\HumanMale"]={f=-0.77908617258072,z=0,y=0.050000008195639,x=0.74222326278687,s=0.75999999046326},
+		["Character\\Human\\Female\\HumanFemale"]={f=-0.80000001192093,z=0,y=0.065802328288555,x=0.64740478992462,s=0.74000000953674},
+		["Character\\Orc\\Male\\OrcMale"]={f=-0.80000001192093,z=0,y=0.097407795488834,x=0.82123410701752,s=0.77999997138977},
+		["Character\\Orc\\Female\\OrcFemale"]={f=-0.80000001192093,z=0,y=0.050001848489046,x=0.58420020341873,s=0.80999994277954},
+		["Character\\Dwarf\\Male\\DwarfMale"]={f=-0.80000001192093,z=0,y=0.063207767903805,x=0.57901078462601,s=0.65000003576279},
+		["Character\\Dwarf\\Female\\DwarfFemale"]={f=-0.80000001192093,z=0,y=0,x=0.5,s=0.69999998807907},
+		["Character\\NightElf\\Male\\NightElfMale"]={f=-0.80000001192093,z=0,y=0,x=0.80000001192093,s=0.85000002384186},
+		["Character\\NightElf\\Female\\NightElfFemale"]={f=-0.80000001192093,z=0,y=0,x=0.69999998807907,s=0.80000001192093},
+		["Character\\Scourge\\Male\\ScourgeMale"]={f=-0.80000001192093,z=0,y=0.050000000745058,x=0.60000002384186,s=0.75},
+		["Character\\Scourge\\Female\\ScourgeFemale"]={f=-0.84182971715927,z=0,y=0.034196116030216,x=0.69481551647186,s=0.80000001192093},
+		["Character\\Tauren\\Male\\TaurenMale"]={f=-0.80000001192093,z=0,y=0.034198451787233,x=0.77382946014404,s=0.83000004291534},
+		["Character\\Tauren\\Female\\TaurenFemale"]={f=-0.80000001192093,z=0,y=0.034198451787233,x=0.67901241779327,s=0.89999997615814},
+		["Creature\\Horse\\Horse"]={f=-0.73725444078445,z=0,y=1.1403691768646,x=0.031111603602767,s=0.77999997138977},
+		["Creature\\AncientProtector\\AncientProtector"]={f=-0.80000001192093,z=0,y=-2.320371389389,x=-0.60098922252655,s=0.66000008583069},
+		["Creature\\ElementalEarth\\ElementalEarth"]={f=-0.80000001192093,z=0,y=2.6732115745544,x=0.22073835134506,s=0.56000018119812},
+		["Creature\\Skeleton\\Skeleton"]={f=-0.80000001192093,z=0,y=0.69790160655975,x=0.72642016410828,s=0.75},
+		["Creature\\GolemHarvestStage2\\GolemHarvestStage2"]={f=-0.80000001192093,z=0,y=1.2627151012421,x=0.57901239395142,s=0.70999997854233},
+		["Creature\\DireWolf\\DireWolf"]={f=-0.80000001192093,z=0,y=0.050000000745058,x=0.60000002384186,s=0.75},
+		["Creature\\HumanMalePeasant\\HumanMalePeasant"]={f=-0.80000001192093,z=0,y=0.14481474459171,x=0.60000002384186,s=0.83999991416931},
+		["Creature\\WindSerpent\\WindSerpent"]={f=-0.80000001192093,z=0,y=1,x=0.5,s=0.75},
+		["Creature\\Dryad\\Dryad"]={f=-0.80000001192093,z=0,y=0.61888998746872,x=1.0740728378296,s=0.75},
+		["Creature\\Satyr\\Satyr"]={f=-0.80000001192093,z=0,y=0.67950546741486,x=0.90073955059052,s=0.69999998807907},
+		["Creature\\HumanMaleKid\\HumanMaleKid"]={f=-0.80000001192093,z=0,y=0.050000000745058,x=0.60000002384186,s=0.75},
+		["Creature\\HumanFemaleKid\\HumanFemaleKid"]={f=-0.80000001192093,z=0,y=0.050000000745058,x=0.60000002384186,s=0.75},
+		["Creature\\Tiger\\Tiger"]={f=-0.80000001192093,z=0,y=0.2370380461216,x=0.36345735192299,s=0.5},
+		["Creature\\bear\\Bear"]={f=-0.80000001192093,z=0,y=0.16061706840992,x=0.39457213878632,s=0.58000016212463},
+		["Creature\\HumanFemaleWarriorLight\\HumanFemaleWarriorLight"]={f=-0.67450886964798,z=0,y=0.63469153642654,x=0.63160467147827,s=0.8199999332428},
+		["Creature\\HumanMaleWarriorHeavy\\HumanMaleWarriorHeavy"]={f=-0.80000001192093,z=0,y=0.69790238142014,x=0.59999847412109,s=0.75999999046326},
+		["Creature\\HumanMaleWarriorMedium\\HumanMaleWarriorMedium"]={f=-0.80000001192093,z=0,y=0.72950547933578,x=0.78963100910187,s=0.80999994277954},
+		["Creature\\HumanMaleWarriorLight\\HumanMaleWarriorLight"]={f=-0.80000001192093,z=0,y=0.76111245155334,x=0.72642016410828,s=0.77999997138977},
+		["Creature\\HumanFemaleCaster\\HumanFemaleCaster"]={f=-0.67450886964798,z=0,y=0.0658038854599,x=0.71061551570892,s=0.87999987602234},
+		["Creature\\WaterElemental\\WaterElemental"]={f=-0.65359717607498,z=0,y=1.12073969841,x=0.80592876672745,s=0.60000014305115},
+		["Creature\\Chicken\\Chicken"]={f=-0.82091385126114,z=0,y=-0.0290124155581,x=0.69481551647186,s=1.2499995231628},
+		["Creature\\OrcMaleWarriorLight\\OrcMaleWarriorLight"]={f=-0.80000001192093,z=0,y=0.2554318010807,x=0.61580157279968,s=0.64000010490417},
+		["Creature\\OrcMaleMerchantLight\\OrcMaleMerchantLight"]={f=-0.80000001192093,z=0,y=0.14481319487095,x=0.60000002384186,s=0.73000001907349},
+		["Creature\\Rabbit\\Rabbit"]={f=-0.80000001192093,z=0,y=-0.044815521687269,x=0.26814728975296,s=0.51000022888184},
+		["Creature\\GnollCaster\\GnollCaster"]={f=-0.80000001192093,z=0,y=0.38185194134712,x=0.28395044803619,s=0.75},
+		["Creature\\HumanMalePirateCaptain\\HumanMalePirateCaptain"]={f=-0.80000001192093,z=0,y=0.65777826309204,x=0.6103720664978,s=0.8100004196167},
+		["Creature\\EyeOfKathune\\EyeofKathune"]={f=-0.21437960863113,z=0,y=0.7453111410141,x=2.4646880626678,s=0.87999987602234},
+		["Creature\\HumanMalePirateCrewman\\HumanMalePirateCrewman"]={f=-0.80000001192093,z=0,y=0.68209928274155,x=0.66321086883545,s=0.79999995231628},
+		["Creature\\HumanMalePirateSwashbuckler\\HumanMalePirateSwashbuckler"]={f=-0.80000001192093,z=0,y=0.71370315551758,x=0.64740777015686,s=0.79999995231628},
+		["Creature\\Dreadlord\\DreadLord"]={f=-0.6954248547554,z=0,y=4.366913318634,x=1.357776761055,s=1},
+		["Creature\\Gorilla\\Gorilla"]={f=-0.80000001192093,z=0,y=0.050000000745058,x=0.60000002384186,s=0.82999992370605},
+		["Creature\\Frog\\Frog"]={f=-0.80000001192093,z=0,y=0.35024732351303,x=0.77382636070251,s=0.90999984741211},
+		["Creature\\Banshee\\Banshee"]={f=-0.80000001192093,z=0,y=-0.0054326057434082,x=0.72691476345062,s=0.75},
+		["Creature\\Quillboar\\QuillBoar"]={f=-0.80000001192093,z=0,y=0.32098683714867,x=0.60049152374268,s=0.95000028610229},
+		["Creature\\Wendigo\\Wendigo"]={f=-0.80000001192093,z=0,y=1.1877785921097,x=0.3155534863472,s=0.53000020980835},
+		["Creature\\FleshGolem\\FleshGolem"]={f=-0.80000001192093,z=0,y=1.5733337402344,x=0.17876589298248,s=0.64000022411346},
+		["Creature\\Goblin\\Goblin"]={f=-0.80000001192093,z=0,y=0.09740773588419,x=0.67901051044464,s=0.75},
+		["Creature\\Zombie\\ZombieArm"]={f=-0.80000001192093,z=0,y=0.36604809761047,x=0.66320776939392,s=0.75},
+		["Creature\\SeaTurtle\\SeaTurtle"]={f=-0.80000001192093,z=0,y=0.12901243567467,x=0.42617058753967,s=0.98999977111816},
+		["Creature\\SkeletonMage\\SkeletonMage"]={f=-0.80000001192093,z=0,y=0.034196894615889,x=0.71061861515045,s=0.82999992370605},
+		["Creature\\Goblin\\GoblinShredder"]={f=-0.71634268760681,z=0,y=1.9469132423401,x=0.87926197052002,s=0.46000021696091},
+		["Character\\Gnome\\Male\\GnomeMale"]={f=-0.80000001192093,z=0,y=0,x=0.40000000596046,s=0.60000002384186},
+		["Character\\Gnome\\Female\\GnomeFemale"]={f=-0.80000001192093,z=0,y=0,x=0.30000001192093,s=0.60000002384186},
+		["Character\\Troll\\Male\\TrollMale"]={f=-0.80000001192093,z=0,y=0.081605434417725,x=0.83703720569611,s=0.75},
+		["Character\\Troll\\Female\\TrollFemale"]={f=-0.80000001192093,z=0,y=0.097407758235931,x=0.80543255805969,s=0.80000001192093},
+		["Creature\\AncientOfLore\\AncientofLore"]={f=-1.0928078889847,z=0,y=2.8444454669952,x=1.7540836334229,s=0.32999992370605},
+		["Creature\\AncientOfWar\\AncientofWar"]={f=-0.98823046684265,z=0,y=3.1156821250916,x=1.8958030939102,s=0.35000038146973},
+		["Creature\\ThunderLizard\\ThunderLizard"]={f=-0.75817239284515,z=0,y=1.4564200639725,x=0.18913649022579,s=0.41000032424927},
+		["Creature\\Dragon\\Dragon"]={f=5.2653560638428,z=0,y=6.1339564323425,x=2.1644389629364,s=0.41000032424927},
+		["Creature\\MountainGiant\\MountainGiant"]={f=-0.80000001192093,z=0,y=1.8514832258224,x=0.36296436190605,s=0.60000014305115},
+		["Creature\\Wisp\\Wisp"]={f=-0.82091403007507,z=0,y=1.2825925350189,x=0.67901408672333,s=0.39000010490417},
+		["Creature\\DruidBear\\DruidBear"]={f=-0.80000001192093,z=0,y=0.11061941832304,x=0.5846945643425,s=0.62999987602234},
+		["Creature\\RidingHorse\\RidingHorse"]={f=-0.71634268760681,z=0,y=1.1245683431625,x=-0.00049453275278211,s=0.75},
+		["Creature\\ForceOfNature\\ForceofNature"]={f=-0.80000001192093,z=0,y=0.23962873220444,x=0.85283875465393,s=0.96999979019165},
+		["Creature\\HighElf\\HighElfFemale_Mage"]={f=-0.80000001192093,z=-0.89999997615814,y=0.063209339976311,x=0.70518451929092,s=0.75},
+		["Creature\\HighElf\\HighElfFemale_Hunter"]={f=-0.80000001192093,z=-0.89999997615814,y=0.047407757490873,x=0.75259536504745,s=0.75},
+		["Creature\\HighElf\\HighElfFemale_Priest"]={f=-0.80000001192093,z=-0.89999997615814,y=0.094815529882908,x=0.68938142061234,s=0.75},
+		["Creature\\HighElf\\HighElfMale_Mage"]={f=-1.5,z=-2,y=0.73160463571548,x=2.3683938980103,s=0.75},
+		["Creature\\HighElf\\HighElfMale_Hunter"]={f=-1.5,z=-2,y=0.76321005821228,x=2.3683953285217,s=0.70000004768372},
+		["Creature\\HighElf\\HighElfMale_Warrior"]={f=-1.5,z=-2,y=0.74740695953369,x=2.3683969974518,s=0.71000003814697},
+		["Creature\\NagaMale\\NagaMale"]={f=-0.67450886964798,z=0,y=-0.29765585064888,x=0.44197365641594,s=0.98999977111816},
+		["Creature\\Imp\\Imp"]={f=-0.047059327363968,z=0,y=0.41345661878586,x=0.85284346342087,s=0.46000027656555},
+		["Creature\\FelBat\\FelBat"]={f=-0.80000001192093,z=0,y=1.1719752550125,x=1.6113580465317,s=0.75},
+		["Creature\\Centaur\\CentaurCaster"]={f=-0.80000001192093,z=0,y=0.84012413024902,x=1.2637022733688,s=0.75},
+		["Creature\\NagaFemale\\Siren"]={f=-0.80000001192093,z=0,y=0.42925906181335,x=0.66321241855621,s=1.0099997520447},
+		["Creature\\Drake\\Drake"]={f=-1.0509803295135,z=0,y=0.52407282590866,x=0.5841953754425,s=0.62000012397766},
+		["Creature\\StoneKeeper\\StoneKeeper"]={f=-0.63268119096756,z=0,y=0.79271548986435,x=0.63160467147827,s=0.71000003814697},
+		["Creature\\GnomeSpidertank\\GnomeBot"]={f=-1.1764631271362,z=-4,y=8.8335857391357,x=3.1807420253754,s=0.48000013828278},
+		["Creature\\Wyvern\\Wyvern"]={f=-0.80000001192093,z=0,y=0.85592651367188,x=1.1372820138931,s=0.75},
+		["Character\\Goblin\\Male\\GoblinMale"]={f=-0.80000001192093,z=0,y=0.065801553428173,x=0.40000000596046,s=0.5},
+		["Character\\Goblin\\Female\\GoblinFemale"]={f=-0.80000001192093,z=0,y=0.034198451787233,x=0.46321085095406,s=0.5},
+		["Creature\\Worm\\Worm"]={f=-0.80000001192093,z=0,y=0.1448155194521,x=1.4059256315231,s=0.75},
+		["Creature\\TrollDire\\TrollDire"]={f=-0.80000001192093,z=0,y=0.85592716932297,x=1.2004945278168,s=0.75},
+		["Creature\\Kodobeast\\KodoBeastPack"]={f=-0.80000001192093,z=0,y=2.2049372196198,x=0.26320776343346,s=0.40000000596046},
+		["Creature\\GolemStone\\GolemCannonStone"]={f=-0.63268131017685,z=0,y=0.98234480619431,x=0.80543255805969,s=0.72000002861023},
+		["Creature\\Ogre\\OgreWarlord"]={f=-0.80000001192093,z=0,y=0.19222173094749,x=0.72641861438751,s=0.85999989509583},
+		["Creature\\spirithealer\\SpiritHealer"]={f=-0.63267910480499,z=0,y=0.12493716925383,x=0.63184958696365,s=0.75},
+		["Creature\\Dragon\\DragonAzurgoz"]={f=-1.4065378904343,z=0,y=5.9917325973511,x=3.6498737335205,s=0.59000015258789},
+		["Creature\\Snowman\\SnowMan"]={f=-0.80000001192093,z=0,y=0.11320931464434,x=0.7896294593811,s=0.75},
+		["Creature\\DragonFootSoldier\\DragonFootSoldier"]={f=-0.61176329851151,z=0,y=-0.81913578510284,x=1.7061719894409,s=1.2999994754791},
+		["Creature\\Nightmare\\Gorgon101"]={f=-0.73725646734238,z=0,y=1.519629240036,x=0.031111678108573,s=0.73000001907349},
+		["Creature\\WarHorse\\PVPWarHorse"]={f=-0.80000001192093,z=0,y=-0.10802406072617,x=0.75802636146545,s=1.0299997329712},
+		["Creature\\AncientOfLore\\AncientofLore"]={f=-0.80000001192093,z=0,y=2.6706192493439,x=1.6750696897507,s=0.33999991416931},
+		["Creature\\OrcFemaleKid\\OrcFemaleKid"]={f=-0.67451095581055,z=0,y=-0.18419931828976,x=0.54765427112579,s=1.0900003910065},
+		["Creature\\OrcMaleKid\\OrcMaleKid"]={f=-0.69542270898819,z=0,y=-0.073579832911491,x=0.51604968309402,s=1.0100004673004},
+		["Creature\\ReinDeer\\ReinDeer"]={f=-0.69542473554611,z=0,y=1.4090133905411,x=-0.03209924697876,s=0.67000007629395},
+		["Creature\\Cupid\\Cupid"]={f=-0.80000001192093,z=0,y=1.3616067171097,x=0.66320776939392,s=0.55000019073486},
+		["Creature\\QuestObjects\\Creature_ScourgeCrystalDamaged"]={f=4.3241829872131,z=0,y=12.644563674927,x=2.132844209671,s=2.3399984836578}		
+	}
+	m = NPCModels[model]
+	if (m) then
+		storyline.NPC.PlayerFrame:SetFacing(m.f)
+		storyline.NPC.PlayerFrame:SetPosition(m.z, m.x, m.y)
+		storyline.NPC.PlayerFrame:SetModelScale(m.s)
+		--storyline.NPC.PlayerFrame:SetModelScale(m.s-(StorylineOptions.WindowScale-1)) -- might want to try something to allow window scaling
+		--DEFAULT_CHAT_FRAME:AddMessage(format("%s %s %s %s %s",m.f,m.z,m.y,m.x,storyline.NPC.PlayerFrame:GetModelScale()))
+	end
 end
 
 

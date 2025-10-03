@@ -107,13 +107,16 @@ function storyline:OnEvent()
 			StorylineOptions.FontSize = 14
 			StorylineOptions.EnableModelManip = 0
 			StorylineOptions.InstantRewards = 0
+			StorylineOptions.EnableModelManipDebug = 0
 		end
+		
 		-- compability to old version
 		if not StorylineOptions.WindowScale then StorylineOptions.WindowScale = 1 end
 		if not StorylineOptions.WindowLevel then StorylineOptions.WindowLevel = 4 end
 		if not StorylineOptions.FontSize then StorylineOptions.FontSize = 14 end
 		if not StorylineOptions.EnableModelManip then StorylineOptions.EnableModelManip = 0 end
 		if not StorylineOptions.InstantRewards then StorylineOptions.InstantRewards = 0 end
+		if not StorylineOptions.EnableModelManipDebug then StorylineOptions.EnableModelManipDebug = 0 end
 
 		
 		storyline.Options.TextSpeed = StorylineOptions.TextSpeed
@@ -1694,16 +1697,16 @@ function storyline.OptionsFrame:ConfigureFrame()
 
 	--Instant Quest Text Option (uses blizzard interface option variable)
 	self.InstantTextButton = CreateFrame("CheckButton", nil, self, "UICheckButtonTemplate")
-				self.InstantTextButton:SetWidth(24)
-				self.InstantTextButton:SetHeight(24)
-				self.InstantTextButton:SetPoint("TOPLEFT", 125, -5)
-				self.InstantTextButton:SetScript("OnClick", function ()
-													 PlaySound("igMainMenuOptionCheckBoxOn")
-													 if QUEST_FADING_DISABLE == "1" then  QUEST_FADING_DISABLE = "0"
-													 else QUEST_FADING_DISABLE = "1";
-													 PlaySound("igQuestCancel"); end
-													 storyline.UpdateOptions()
-													 end)
+			self.InstantTextButton:SetWidth(24)
+			self.InstantTextButton:SetHeight(24)
+			self.InstantTextButton:SetPoint("TOPLEFT", 125, -5)
+			self.InstantTextButton:SetScript("OnClick", function ()
+				PlaySound("igMainMenuOptionCheckBoxOn")
+				if QUEST_FADING_DISABLE == "1" then  QUEST_FADING_DISABLE = "0"
+				else QUEST_FADING_DISABLE = "1";
+				PlaySound("igQuestCancel"); end
+				storyline.UpdateOptions()
+				end)
 
 			self.InstantTextFont = self.InstantTextButton:CreateFontString(nil, "OVERLAY")
 				self.InstantTextFont:SetPoint("TOPLEFT", -115, -3)
@@ -1727,10 +1730,10 @@ function storyline.OptionsFrame:ConfigureFrame()
 		 getglobal("StorylineSpeedSlider" .. 'High'):SetText("10")
 		 getglobal("StorylineSpeedSlider" .. 'Text'):SetText(storyline.Options.TextSpeed)
 		 self.SpeedSlider:SetScript("OnValueChanged", function()
-			 										storyline.Options.TextSpeed = storyline.OptionsFrame.SpeedSlider:GetValue()/10; StorylineOptions.TextSpeed = storyline.Options.TextSpeed
-	 												getglobal("StorylineSpeedSlider" .. 'Text'):SetText(storyline.Options.TextSpeed)
-	 											end)
-												
+			storyline.Options.TextSpeed = storyline.OptionsFrame.SpeedSlider:GetValue()/10; StorylineOptions.TextSpeed = storyline.Options.TextSpeed
+			getglobal("StorylineSpeedSlider" .. 'Text'):SetText(storyline.Options.TextSpeed)
+		end)
+		
 		self.SpeedFont = self.SpeedSlider:CreateFontString(nil, "OVERLAY")
 		 self.SpeedFont:SetPoint("TOPLEFT", 0, 30)
 		 self.SpeedFont:SetFont("Fonts\\FRIZQT__.TTF", 12)
@@ -1744,7 +1747,7 @@ function storyline.OptionsFrame:ConfigureFrame()
 		 -- bugged, want to remove
 		 self.ScaleSlider = CreateFrame("Slider","StorylineScaleSlider",self,"OptionsSliderTemplate")
 		 self.ScaleSlider:SetPoint("TOPLEFT", 180, -40)
-		self.ScaleSlider:SetWidth(132)
+		 self.ScaleSlider:SetWidth(132)
 		 self.ScaleSlider:SetHeight(17)
 		 self.ScaleSlider:SetOrientation("HORIZONTAL")
 		 self.ScaleSlider:SetThumbTexture("Interface\\Buttons\\UI-SliderBar-Button-Horizontal")
@@ -1755,17 +1758,24 @@ function storyline.OptionsFrame:ConfigureFrame()
 		 getglobal("StorylineScaleSlider" .. 'High'):SetText("150%")
 		 getglobal("StorylineScaleSlider" .. 'Text'):SetText(storyline.Options.WindowScale*100 .. " %")
 		 self.ScaleSlider:SetScript("OnValueChanged", function()
-			 										storyline.Options.WindowScale = storyline.OptionsFrame.ScaleSlider:GetValue()/100; StorylineOptions.WindowScale = storyline.Options.WindowScale
-	 												getglobal("StorylineScaleSlider" .. 'Text'):SetText(storyline.Options.WindowScale*100 .. " %")
-	 											end)
+			storyline.Options.WindowScale = storyline.OptionsFrame.ScaleSlider:GetValue()/100; StorylineOptions.WindowScale = storyline.Options.WindowScale
+			getglobal("StorylineScaleSlider" .. 'Text'):SetText(storyline.Options.WindowScale*100 .. " %")
+		end)
 		storyline.Background:SetScale(storyline.Options.WindowScale)
 		
 		 self.ScaleButton = CreateFrame("Button",nil,self.ScaleSlider ,"UIPanelButtonTemplate")
 		 self.ScaleButton:SetPoint("BOTTOMRIGHT", 50, 0)
-		self.ScaleButton:SetWidth(40)
+		 self.ScaleButton:SetWidth(40)
 		 self.ScaleButton:SetHeight(20)
 		 self.ScaleButton:SetText("Set!")
 		 self.ScaleButton:SetScript("OnClick",function() storyline.Background:SetScale(storyline.Options.WindowScale) end)
+		 self.ScaleButton:SetScript("OnEnter",function()
+			GameTooltip:SetOwner(self.ScaleFont, "ANCHOR_TOPRIGHT",20,-80);
+			GameTooltip:SetText(
+				"Do /storyline reset if scaled out of bounds by accident.", 1, 1, 1, 1, 1);
+			GameTooltip:Show()
+		end)
+		 self.ScaleButton:SetScript("OnLeave",function() GameTooltip:Hide() end)
 		
 		self.ScaleFont = self.ScaleSlider:CreateFontString(nil, "OVERLAY")
 		 self.ScaleFont:SetPoint("TOPLEFT", 0, 30)
@@ -1791,10 +1801,10 @@ function storyline.OptionsFrame:ConfigureFrame()
 		 getglobal("StorylineFontSizeSlider" .. 'High'):SetText("20")
 		 getglobal("StorylineFontSizeSlider" .. 'Text'):SetText(StorylineOptions.FontSize)
 		 self.FontSizeSlider:SetScript("OnValueChanged", function()
-													StorylineOptions.FontSize = storyline.OptionsFrame.FontSizeSlider:GetValue()
-													storyline.Text.Questtext.Font:SetFont("Fonts\\FRIZQT__.TTF", StorylineOptions.FontSize)
-	 												getglobal("StorylineFontSizeSlider" .. 'Text'):SetText(StorylineOptions.FontSize)
-	 											end)
+			StorylineOptions.FontSize = storyline.OptionsFrame.FontSizeSlider:GetValue()
+			storyline.Text.Questtext.Font:SetFont("Fonts\\FRIZQT__.TTF", StorylineOptions.FontSize)
+			getglobal("StorylineFontSizeSlider" .. 'Text'):SetText(StorylineOptions.FontSize)
+		end)
 												
 		self.FontSizeFont = self.FontSizeSlider:CreateFontString(nil, "OVERLAY")
 		 self.FontSizeFont:SetPoint("TOPLEFT", 0, 30)
@@ -1813,10 +1823,10 @@ function storyline.OptionsFrame:ConfigureFrame()
 			 self.MoveButton:SetHeight(24)
 			 self.MoveButton:SetPoint("TOPLEFT",650,-5)
 			 self.MoveButton:SetScript("OnClick", function ()
-				 									PlaySound("igMainMenuOptionCheckBoxOn")
-													if self.MoveButton:GetChecked() then storyline.Background:EnableMouse(1); storyline.Background.layer2.Background:EnableMouse(0) 
-													else storyline.Background:EnableMouse(0) ; storyline.Background.layer2.Background:EnableMouse(1) end
-													end)
+				PlaySound("igMainMenuOptionCheckBoxOn")
+				if self.MoveButton:GetChecked() then storyline.Background:EnableMouse(1); storyline.Background.layer2.Background:EnableMouse(0) 
+				else storyline.Background:EnableMouse(0) ; storyline.Background.layer2.Background:EnableMouse(1) end
+			end)
 
 		 self.MoveFont = self.MoveButton:CreateFontString(nil, "OVERLAY")
 			 self.MoveFont:SetPoint("LEFT", -210, 0)
@@ -1826,6 +1836,13 @@ function storyline.OptionsFrame:ConfigureFrame()
 			 self.MoveFont:SetJustifyV("CENTER")
 			 self.MoveFont:SetText("Moveable:")
 			 self.MoveFont:SetTextColor(1,1,1)
+		 self.MoveButton:SetScript("OnEnter",function()
+				GameTooltip:SetOwner(self.MoveFont, "ANCHOR_TOPRIGHT",20,-80);
+				GameTooltip:SetText(
+					"Allows moving the window around. Model manipulation interferes with this somewhat, you'll need to click higher if both are enabled. Do /storyline reset if moved out of bounds by accident.", 1, 1, 1, 1, 1);
+				GameTooltip:Show()
+				end)
+		 self.MoveButton:SetScript("OnLeave",function() GameTooltip:Hide() end)
 			 
 		
 		-- hide blizzard frames
@@ -1834,11 +1851,11 @@ function storyline.OptionsFrame:ConfigureFrame()
 				self.HideButton:SetHeight(24)
 				self.HideButton:SetPoint("TOPLEFT",650,-25)
 				self.HideButton:SetScript("OnClick", function ()
-													 PlaySound("igMainMenuOptionCheckBoxOn")
-													 if self.HideButton:GetChecked() then storyline.Options.HideBlizzardFrames = 1; StorylineOptions.HideBlizzardFrames = 1
- 													 else storyline.Options.HideBlizzardFrames = 0; StorylineOptions.HideBlizzardFrames = 0; DeclineQuest(); PlaySound("igQuestCancel"); end
-													 storyline:HideBlizzard()
-													 end)
+					PlaySound("igMainMenuOptionCheckBoxOn")
+					if self.HideButton:GetChecked() then storyline.Options.HideBlizzardFrames = 1; StorylineOptions.HideBlizzardFrames = 1
+					else storyline.Options.HideBlizzardFrames = 0; StorylineOptions.HideBlizzardFrames = 0; DeclineQuest(); PlaySound("igQuestCancel"); end
+					storyline:HideBlizzard()
+				end)
 
 			self.HideFont = self.HideButton:CreateFontString(nil, "OVERLAY")
 				self.HideFont:SetPoint("LEFT", -210, 0)
@@ -1859,10 +1876,10 @@ function storyline.OptionsFrame:ConfigureFrame()
 				self.InstantRewardsButton:SetHeight(24)
 				self.InstantRewardsButton:SetPoint("TOPLEFT",650,-50)
 				self.InstantRewardsButton:SetScript("OnClick", function ()
-													 PlaySound("igMainMenuOptionCheckBoxOn")
-													 if StorylineOptions.InstantRewards == 0 then StorylineOptions.InstantRewards = 1
- 													 else StorylineOptions.InstantRewards = 0; PlaySound("igQuestCancel"); end
-													 end)
+					PlaySound("igMainMenuOptionCheckBoxOn")
+					if StorylineOptions.InstantRewards == 0 then StorylineOptions.InstantRewards = 1
+					else StorylineOptions.InstantRewards = 0; PlaySound("igQuestCancel"); end
+				end)
 
 													 
 
@@ -1875,10 +1892,10 @@ function storyline.OptionsFrame:ConfigureFrame()
 				self.InstantRewardsFont:SetText("Instant Quest Rewards:")
 				self.InstantRewardsFont:SetTextColor(1,1,1)
 				self.InstantRewardsButton:SetScript("OnEnter",function()
-													GameTooltip:SetOwner(self.InstantRewardsFont, "ANCHOR_TOPRIGHT",20,-80);
-													GameTooltip:SetText("When enabled, displays quest rewards before clicking continue", 1, 1, 1, 1, 1);
-													GameTooltip:Show()
-													end)
+					GameTooltip:SetOwner(self.InstantRewardsButton, "ANCHOR_TOPRIGHT",20,-80);
+					GameTooltip:SetText("When enabled, displays quest rewards before clicking continue", 1, 1, 1, 1, 1);
+					GameTooltip:Show()
+				end)
 				self.InstantRewardsButton:SetScript("OnLeave",function() GameTooltip:Hide() end)
 
 			
@@ -1892,20 +1909,20 @@ function storyline.OptionsFrame:ConfigureFrame()
 					self.PFHideButton:SetHeight(24)
 					self.PFHideButton:SetPoint("TOPLEFT",650,-100)
 					self.PFHideButton:SetScript("OnClick", function ()
-														 PlaySound("igMainMenuOptionCheckBoxOn")
-														 if pfUI_config["disabled"]["skin_Gossip and Quest"] == "0" 
-														 or not pfUI_config["disabled"]["skin_Gossip and Quest"] then 
-															pfUI_config["disabled"]["skin_Gossip and Quest"] = "1"
-														 else 
-															pfUI_config["disabled"]["skin_Gossip and Quest"] = "0"
-															DeclineQuest()
-															PlaySound("igQuestCancel")
-														 end
-														pfUI.api.CreateQuestionDialog("Some settings need to reload the UI to take effect.\nDo you want to reload now?", function()
-															pfUI.gui.settingChanged = nil
-															ReloadUI()
-														end)
-														 end)
+						PlaySound("igMainMenuOptionCheckBoxOn")
+						if pfUI_config["disabled"]["skin_Gossip and Quest"] == "0" 
+						or not pfUI_config["disabled"]["skin_Gossip and Quest"] then 
+						pfUI_config["disabled"]["skin_Gossip and Quest"] = "1"
+						else 
+						pfUI_config["disabled"]["skin_Gossip and Quest"] = "0"
+						DeclineQuest()
+						PlaySound("igQuestCancel")
+						end
+					pfUI.api.CreateQuestionDialog("Some settings need to reload the UI to take effect.\nDo you want to reload now?", function()
+						pfUI.gui.settingChanged = nil
+						ReloadUI()
+					end)
+						end)
 
 				self.PFHideFont = self.PFHideButton:CreateFontString(nil, "OVERLAY")
 					self.PFHideFont:SetPoint("LEFT", -210, 0)
@@ -1926,11 +1943,14 @@ function storyline.OptionsFrame:ConfigureFrame()
 				self.ModelManipButton:SetHeight(24)
 				self.ModelManipButton:SetPoint("TOPLEFT",650,-75)
 				self.ModelManipButton:SetScript("OnClick", function ()
-													 PlaySound("igMainMenuOptionCheckBoxOn")
-													 if StorylineOptions.EnableModelManip == 0 then StorylineOptions.EnableModelManip = 1
-													 else StorylineOptions.EnableModelManip = 0 end
-													 storyline:ConfigureModelRotation()
-													 end)
+					PlaySound("igMainMenuOptionCheckBoxOn")
+					if StorylineOptions.EnableModelManip == 0 then 
+						StorylineOptions.EnableModelManip = 1
+						storyline.UpdateOptions()
+					else StorylineOptions.EnableModelManip = 0 end
+						storyline:ConfigureModelRotation()
+						storyline.UpdateOptions()
+				end)
 
 			self.ModelManipFont = self.ModelManipButton:CreateFontString(nil, "OVERLAY")
 				self.ModelManipFont:SetPoint("LEFT", -210, 0)
@@ -1943,7 +1963,44 @@ function storyline.OptionsFrame:ConfigureFrame()
 				
 			if StorylineOptions.EnableModelManip == 1 then self.ModelManipButton:SetChecked(1)
 			else self.ModelManipButton:SetChecked(0) end
+			self.ModelManipButton:SetScript("OnEnter",function()
+				GameTooltip:SetOwner(self.ModelManipFont, "ANCHOR_TOPRIGHT",20,-80);
+				GameTooltip:SetText(
+					"When enabled, allows model manipulation. Right click to move, left click to spin, scroll to scale. Interferes with movable somewhat", 1, 1, 1, 1, 1);
+				GameTooltip:Show()
+				end)
+			self.ModelManipButton:SetScript("OnLeave",function() GameTooltip:Hide() end)
 
+			--Model Manipulation Debug Option
+			self.ModelManipDebugButton = CreateFrame("CheckButton", nil, self, "UICheckButtonTemplate")
+				self.ModelManipDebugButton:SetWidth(24)
+				self.ModelManipDebugButton:SetHeight(24)
+				self.ModelManipDebugButton:SetPoint("TOPLEFT",430,-75)
+				self.ModelManipDebugButton:SetScript("OnClick", function ()
+					PlaySound("igMainMenuOptionCheckBoxOn")
+					if StorylineOptions.EnableModelManipDebug == 0 then StorylineOptions.EnableModelManipDebug = 1
+					else StorylineOptions.EnableModelManipDebug = 0 end
+					storyline:ConfigureModelRotation()
+					end)
+
+			self.ModelManipDebugFont = self.ModelManipDebugButton:CreateFontString(nil, "OVERLAY")
+				self.ModelManipDebugFont:SetPoint("LEFT", -290, 0)
+				self.ModelManipDebugFont:SetFont("Fonts\\FRIZQT__.TTF", 12)
+				self.ModelManipDebugFont:SetWidth(280)
+				self.ModelManipDebugFont:SetJustifyH("RIGHT")
+				self.ModelManipDebugFont:SetJustifyV("CENTER")
+				self.ModelManipDebugFont:SetText("Enable Model Manipulation Debug Ouput:")
+				self.ModelManipDebugFont:SetTextColor(1,1,1)			
+				
+			if StorylineOptions.EnableModelManipDebug == 1 then self.ModelManipDebugButton:SetChecked(1)
+			else self.ModelManipDebugButton:SetChecked(0) end
+			self.ModelManipDebugButton:SetScript("OnEnter",function()
+						GameTooltip:SetOwner(self.ModelManipDebugFont, "ANCHOR_TOPRIGHT",20,-80);
+						GameTooltip:SetText(
+							"When enabled, outputs model info into chat that can be used in Assets/Models.lua to configure how models look in the window. Click the model to output info.", 1, 1, 1, 1, 1);
+						GameTooltip:Show()
+						end)
+			self.ModelManipDebugButton:SetScript("OnLeave",function() GameTooltip:Hide() end)
 			
 		-- Frame Level
 		
@@ -2067,6 +2124,13 @@ function storyline.UpdateOptions()
 	if QUEST_FADING_DISABLE == "0" then storyline.OptionsFrame.InstantTextButton:SetChecked(0); storyline.OptionsFrame.SpeedSlider:Show(); storyline.OptionsFrame.SpeedFont:Show()
 	else storyline.OptionsFrame.InstantTextButton:SetChecked(1); storyline.OptionsFrame.SpeedSlider:Hide(); storyline.OptionsFrame.SpeedFont:Hide() end
 
+	if  StorylineOptions.EnableModelManip == 0 then
+		storyline.OptionsFrame.ModelManipDebugButton:Hide()
+		storyline.OptionsFrame.ModelManipDebugFont:Hide()
+	else
+		storyline.OptionsFrame.ModelManipDebugButton:Show()
+		storyline.OptionsFrame.ModelManipDebugFont:Show()
+	end
 end
 
 function storyline.Player:ConfigureFrame()
@@ -2602,20 +2666,23 @@ function storyline:EnableModelManipulation()
 		--storyline.Player.PlayerFrame:SetPosition(Z, X, Y)
 		local s = storyline.Player.PlayerFrame:GetModelScale()
         s = (arg1 > 0 and s + 0.01 or s - 0.01)
-		DEFAULT_CHAT_FRAME:AddMessage(format("Scale: %s",s))
-
+		if (StorylineOptions.EnableModelManipDebug == 1) then
+			DEFAULT_CHAT_FRAME:AddMessage(format("Scale: %s",s))
+		end
 		storyline.Player.PlayerFrame:SetModelScale(s)
     end)
 	
 	storyline.Player.PlayerFrame:SetScript('OnMouseUp', function(self)
         storyline.Player.PlayerFrame:SetScript('OnUpdate', nil)
-		Z, X, Y = storyline.Player.PlayerFrame:GetPosition(Z, X, Y)
-		facing=storyline.Player.PlayerFrame:GetFacing()
-		model=storyline.Player.PlayerFrame:GetModel()
-		model = string.gsub(model,"\\","\\\\")
-		scale = storyline.Player.PlayerFrame:GetModelScale()
-		--Output for easy model placement
-		DEFAULT_CHAT_FRAME:AddMessage(format('["%s"]={f=%s,z=%s,y=%s,x=%s,s=%s}', model, facing,Z,Y,X,scale))
+		if (StorylineOptions.EnableModelManipDebug == 1) then
+			Z, X, Y = storyline.Player.PlayerFrame:GetPosition(Z, X, Y)
+			facing=storyline.Player.PlayerFrame:GetFacing()
+			model=storyline.Player.PlayerFrame:GetModel()
+			model = string.gsub(model,"\\","\\\\")
+			scale = storyline.Player.PlayerFrame:GetModelScale()
+			--Output for easy model placement
+			DEFAULT_CHAT_FRAME:AddMessage(format('["%s"]={f=%s,z=%s,y=%s,x=%s,s=%s}', model, facing,Z,Y,X,scale))
+		end
     end)
 	
 	storyline.Player.PlayerFrame:SetScript('OnMouseDown', function()
@@ -2656,20 +2723,24 @@ function storyline:EnableModelManipulation()
 
 		local s = storyline.NPC.PlayerFrame:GetModelScale()
         s = (arg1 > 0 and s + 0.01 or s - 0.01)
-		DEFAULT_CHAT_FRAME:AddMessage(format("Scale: %s",s))
+		if (StorylineOptions.EnableModelManipDebug == 1 ) then
+			DEFAULT_CHAT_FRAME:AddMessage(format("Scale: %s",s))
+		end
 
 		storyline.NPC.PlayerFrame:SetModelScale(s)
     end)
 	
 	storyline.NPC.PlayerFrame:SetScript('OnMouseUp', function(self)
         storyline.NPC.PlayerFrame:SetScript('OnUpdate', nil)
-		Z, X, Y = storyline.NPC.PlayerFrame:GetPosition(Z, X, Y)
-		facing=storyline.NPC.PlayerFrame:GetFacing()
-		model=storyline.NPC.PlayerFrame:GetModel()
-		model = string.gsub(model,"\\","\\\\")
-		scale = storyline.NPC.PlayerFrame:GetModelScale()
-		--Output for easy model placement
-		DEFAULT_CHAT_FRAME:AddMessage(format('["%s"]={f=%s,z=%s,y=%s,x=%s,s=%s}', model, facing,Z,Y,X,scale))
+		if (StorylineOptions.EnableModelManipDebug == 1 ) then
+			Z, X, Y = storyline.NPC.PlayerFrame:GetPosition(Z, X, Y)
+			facing=storyline.NPC.PlayerFrame:GetFacing()
+			model=storyline.NPC.PlayerFrame:GetModel()
+			model = string.gsub(model,"\\","\\\\")
+			scale = storyline.NPC.PlayerFrame:GetModelScale()
+			--Output for easy model placement
+			DEFAULT_CHAT_FRAME:AddMessage(format('["%s"]={f=%s,z=%s,y=%s,x=%s,s=%s}', model, facing,Z,Y,X,scale))
+		end
     end)
 	
 	storyline.NPC.PlayerFrame:SetScript('OnMouseDown', function()
@@ -2924,11 +2995,14 @@ end
 local function TextMenu(arg)
 	if arg == nil or arg == "" then
 		DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00Vanilla Storyline:|r This is help topic for |cFFFFFF00 /storyline|r",1,1,1)
-		DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00Vanilla Storyline:|r |cFFFFFF00 /storyline reset|r - reset scale.",1,1,1)
+		DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00Vanilla Storyline:|r |cFFFFFF00 /storyline reset|r - resets scale and window position.",1,1,1)
 		DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00Vanilla Storyline:|r |cFFFFFF00 /storyline move|r - set moveable.",1,1,1)
 	else
 		if arg == "reset" then
 			storyline.Background:SetScale(1); storyline.Options.WindowScale = 1; StorylineOptions.WindowScale = 1
+			storyline.Background:SetUserPlaced(false)
+			ReloadUI()
+			
 		elseif arg == "move" then
 			if not storyline.OptionsFrame.MoveButton:GetChecked() then storyline.Background:EnableMouse(1); storyline.OptionsFrame.MoveButton:SetChecked(true)
 			else storyline.Background:EnableMouse(0);storyline.OptionsFrame.MoveButton:SetChecked(false)  end

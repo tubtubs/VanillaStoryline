@@ -9,4 +9,5 @@
 
 Assets\Localisation.lua
 Assets\Animations.lua
+Assets\Models.lua
 VanillaStoryline.lua

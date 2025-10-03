@@ -2769,7 +2769,7 @@ function storyline:UpdateModels()
 		["Creature\\Tiger\\Tiger"]={f=-0.80000001192093,z=0,y=0.2370380461216,x=0.36345735192299,s=0.5},
 		["Creature\\bear\\Bear"]={f=-0.80000001192093,z=0,y=0.16061706840992,x=0.39457213878632,s=0.58000016212463},
 		["Creature\\HumanFemaleWarriorLight\\HumanFemaleWarriorLight"]={f=-0.67450886964798,z=0,y=0.63469153642654,x=0.63160467147827,s=0.8199999332428},
-		["Creature\\HumanMaleWarriorHeavy\\HumanMaleWarriorHeavy"]={f=-0.80000001192093,z=0,y=0.69790238142014,x=0.59999847412109,s=0.75999999046326},
+		["Creature\\HumanMaleWarriorHeavy\\HumanMaleWarriorHeavy"]={f=-0.80000001192093,z=0,y=0.77691477537155,x=0.6474062204361,s=0.82999992370605},
 		["Creature\\HumanMaleWarriorMedium\\HumanMaleWarriorMedium"]={f=-0.80000001192093,z=0,y=0.72950547933578,x=0.78963100910187,s=0.80999994277954},
 		["Creature\\HumanMaleWarriorLight\\HumanMaleWarriorLight"]={f=-0.80000001192093,z=0,y=0.76111245155334,x=0.72642016410828,s=0.77999997138977},
 		["Creature\\HumanFemaleCaster\\HumanFemaleCaster"]={f=-0.67450886964798,z=0,y=0.0658038854599,x=0.71061551570892,s=0.87999987602234},
@@ -2843,7 +2843,15 @@ function storyline:UpdateModels()
 		["Creature\\OrcMaleKid\\OrcMaleKid"]={f=-0.69542270898819,z=0,y=-0.073579832911491,x=0.51604968309402,s=1.0100004673004},
 		["Creature\\ReinDeer\\ReinDeer"]={f=-0.69542473554611,z=0,y=1.4090133905411,x=-0.03209924697876,s=0.67000007629395},
 		["Creature\\Cupid\\Cupid"]={f=-0.80000001192093,z=0,y=1.3616067171097,x=0.66320776939392,s=0.55000019073486},
-		["Creature\\QuestObjects\\Creature_ScourgeCrystalDamaged"]={f=4.3241829872131,z=0,y=12.644563674927,x=2.132844209671,s=2.3399984836578}		
+		["Creature\\QuestObjects\\Creature_ScourgeCrystalDamaged"]={f=4.3241829872131,z=0,y=12.644563674927,x=2.132844209671,s=2.3399984836578},
+		--Bonus Models
+		["CREATURE\\AlglontheObserver\\AlgalontheObserver"]={f=-0.80000001192093,z=0,y=-0.092220917344093,x=1.674564242363,s=1.0299997329712},
+		["Creature\\Valkier\\Valkier"]={f=-0.80000001192093,z=0,y=-0.20283874869347,x=1.6429595947266,s=1.17999958992},
+		["Creature\\HumanMaleCaster\\HumanMaleCaster"]={f=-0.80000001192093,z=0,y=0.71370393037796,x=0.7422217130661,s=0.84999990463257},
+		["Creature\\RIDINGHORSE\\PackMule"]={f=-0.80000001192093,z=0,y=1.1561739444733,x=0.12592555582523,s=0.72000002861023},
+		["Creature\\HUMLMagicSmith\\HUMLMagicSmith"]={f=-0.80000001192093,z=0,y=0.44506129622459,x=0.55259227752686,s=0.80999994277954}
+
+
 	}
 	m = NPCModels[model]
 	if (m) then

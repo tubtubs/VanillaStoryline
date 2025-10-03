@@ -1692,7 +1692,7 @@ function storyline.OptionsFrame:ConfigureFrame()
  	 self:SetHeight(150)
 	 self:SetPoint("BOTTOM",0,-(self:GetHeight()))
 
-	--Instant Quest Text Option (users blizzard interface option variable)
+	--Instant Quest Text Option (uses blizzard interface option variable)
 	self.InstantTextButton = CreateFrame("CheckButton", nil, self, "UICheckButtonTemplate")
 				self.InstantTextButton:SetWidth(24)
 				self.InstantTextButton:SetHeight(24)
@@ -1741,6 +1741,7 @@ function storyline.OptionsFrame:ConfigureFrame()
 		 self.SpeedFont:SetTextColor(1,1,1)
 		 
 		 -- scale Frame
+		 -- bugged, want to remove
 		 self.ScaleSlider = CreateFrame("Slider","StorylineScaleSlider",self,"OptionsSliderTemplate")
 		 self.ScaleSlider:SetPoint("TOPLEFT", 180, -40)
 		self.ScaleSlider:SetWidth(132)
@@ -1892,12 +1893,18 @@ function storyline.OptionsFrame:ConfigureFrame()
 					self.PFHideButton:SetPoint("TOPLEFT",650,-100)
 					self.PFHideButton:SetScript("OnClick", function ()
 														 PlaySound("igMainMenuOptionCheckBoxOn")
-														 if pfUI_config["disabled"]["skin_Gossip and Quest"] == "0" then pfUI_config["disabled"]["skin_Gossip and Quest"] = "1"
-														 else pfUI_config["disabled"]["skin_Gossip and Quest"] = "0"; DeclineQuest(); PlaySound("igQuestCancel"); end
-															pfUI.api.CreateQuestionDialog("Some settings need to reload the UI to take effect.\nDo you want to reload now?", function()
-																pfUI.gui.settingChanged = nil
-																ReloadUI()
-															end)
+														 if pfUI_config["disabled"]["skin_Gossip and Quest"] == "0" 
+														 or not pfUI_config["disabled"]["skin_Gossip and Quest"] then 
+															pfUI_config["disabled"]["skin_Gossip and Quest"] = "1"
+														 else 
+															pfUI_config["disabled"]["skin_Gossip and Quest"] = "0"
+															DeclineQuest()
+															PlaySound("igQuestCancel")
+														 end
+														pfUI.api.CreateQuestionDialog("Some settings need to reload the UI to take effect.\nDo you want to reload now?", function()
+															pfUI.gui.settingChanged = nil
+															ReloadUI()
+														end)
 														 end)
 
 				self.PFHideFont = self.PFHideButton:CreateFontString(nil, "OVERLAY")

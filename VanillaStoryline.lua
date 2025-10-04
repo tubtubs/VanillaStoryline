@@ -108,8 +108,18 @@ function storyline:OnEvent()
 			StorylineOptions.EnableModelManip = 0
 			StorylineOptions.InstantRewards = 0
 			StorylineOptions.EnableModelManipDebug = 0
+			StorylineOptions.EnableModelManipSave = 0
 		end
-		
+
+		--Storing NPC, and player model info set by the user
+		if not UserNPCModels then
+			UserNPCModels = {}
+		end
+
+		if not UserPlayerModels then
+			UserPlayerModels = {}
+		end
+
 		-- compability to old version
 		if not StorylineOptions.WindowScale then StorylineOptions.WindowScale = 1 end
 		if not StorylineOptions.WindowLevel then StorylineOptions.WindowLevel = 4 end
@@ -117,6 +127,7 @@ function storyline:OnEvent()
 		if not StorylineOptions.EnableModelManip then StorylineOptions.EnableModelManip = 0 end
 		if not StorylineOptions.InstantRewards then StorylineOptions.InstantRewards = 0 end
 		if not StorylineOptions.EnableModelManipDebug then StorylineOptions.EnableModelManipDebug = 0 end
+		if not StorylineOptions.EnableModelManipSave then StorylineOptions.EnableModelManipSave = 0 end
 
 		
 		storyline.Options.TextSpeed = StorylineOptions.TextSpeed
@@ -1975,13 +1986,12 @@ function storyline.OptionsFrame:ConfigureFrame()
 			self.ModelManipDebugButton = CreateFrame("CheckButton", nil, self, "UICheckButtonTemplate")
 				self.ModelManipDebugButton:SetWidth(24)
 				self.ModelManipDebugButton:SetHeight(24)
-				self.ModelManipDebugButton:SetPoint("TOPLEFT",430,-75)
+				self.ModelManipDebugButton:SetPoint("TOPLEFT",430,-85)
 				self.ModelManipDebugButton:SetScript("OnClick", function ()
 					PlaySound("igMainMenuOptionCheckBoxOn")
 					if StorylineOptions.EnableModelManipDebug == 0 then StorylineOptions.EnableModelManipDebug = 1
 					else StorylineOptions.EnableModelManipDebug = 0 end
-					storyline:ConfigureModelRotation()
-					end)
+				end)
 
 			self.ModelManipDebugFont = self.ModelManipDebugButton:CreateFontString(nil, "OVERLAY")
 				self.ModelManipDebugFont:SetPoint("LEFT", -290, 0)
@@ -2001,6 +2011,68 @@ function storyline.OptionsFrame:ConfigureFrame()
 						GameTooltip:Show()
 						end)
 			self.ModelManipDebugButton:SetScript("OnLeave",function() GameTooltip:Hide() end)
+
+			--Model Manipulation Save Option
+			self.ModelManipSaveButton = CreateFrame("CheckButton", nil, self, "UICheckButtonTemplate")
+				self.ModelManipSaveButton:SetWidth(24)
+				self.ModelManipSaveButton:SetHeight(24)
+				self.ModelManipSaveButton:SetPoint("TOPLEFT",430,-110)
+				self.ModelManipSaveButton:SetScript("OnClick", function ()
+					PlaySound("igMainMenuOptionCheckBoxOn")
+					if StorylineOptions.EnableModelManipSave == 0 then StorylineOptions.EnableModelManipSave = 1
+					else StorylineOptions.EnableModelManipSave = 0 end
+					--storyline:ConfigureModelRotation()
+					end)
+
+			self.ModelManipSaveFont = self.ModelManipSaveButton:CreateFontString(nil, "OVERLAY")
+				self.ModelManipSaveFont:SetPoint("LEFT", -290, 0)
+				self.ModelManipSaveFont:SetFont("Fonts\\FRIZQT__.TTF", 12)
+				self.ModelManipSaveFont:SetWidth(280)
+				self.ModelManipSaveFont:SetJustifyH("RIGHT")
+				self.ModelManipSaveFont:SetJustifyV("CENTER")
+				self.ModelManipSaveFont:SetText("Enable Model Manipulation Saving:")
+				self.ModelManipSaveFont:SetTextColor(1,1,1)			
+				
+			if StorylineOptions.EnableModelManipSave == 1 then self.ModelManipSaveButton:SetChecked(1)
+			else self.ModelManipSaveButton:SetChecked(0) end
+			self.ModelManipSaveButton:SetScript("OnEnter",function()
+						GameTooltip:SetOwner(self.ModelManipSaveFont, "ANCHOR_TOPRIGHT",20,-80);
+						GameTooltip:SetText(
+							"When enabled, saves model info locally for your account. Right click this button to reset the model. Automatically saves when you're done moving the model.", 1, 1, 1, 1, 1);
+						GameTooltip:Show()
+						end)
+						
+		self.ModelManipSaveButton:SetScript("OnLeave",function() GameTooltip:Hide() end)
+			
+		--Reset Player Model
+		self.ResetPlayerModelButton = CreateFrame("Button",nil,self.ScaleSlider ,"UIPanelButtonTemplate")
+		self.ResetPlayerModelButton:SetPoint("BOTTOMRIGHT", 60, -25)
+		self.ResetPlayerModelButton:SetWidth(140)
+		self.ResetPlayerModelButton:SetHeight(20)
+		self.ResetPlayerModelButton:SetText("Reset Player Model")
+		self.ResetPlayerModelButton:SetScript("OnClick",function() storyline:ResetPlayerModel() end)
+		self.ResetPlayerModelButton:SetScript("OnEnter",function()
+			GameTooltip:SetOwner(self.ScaleFont, "ANCHOR_TOPRIGHT",20,-75);
+			GameTooltip:SetText(
+				"Deletes the custom settings, and redraws the current player model", 1, 1, 1, 1, 1);
+			GameTooltip:Show()
+		end)
+		self.ResetPlayerModelButton:SetScript("OnLeave",function() GameTooltip:Hide() end)
+
+		--Reset NPC Model
+		self.ResetNPCModelButton = CreateFrame("Button",nil,self.ScaleSlider ,"UIPanelButtonTemplate")
+		self.ResetNPCModelButton:SetPoint("BOTTOMRIGHT", 190, -25)
+		self.ResetNPCModelButton:SetWidth(130)
+		self.ResetNPCModelButton:SetHeight(20)
+		self.ResetNPCModelButton:SetText("Reset NPC Model")
+		self.ResetNPCModelButton:SetScript("OnClick",function() storyline:ResetNPCModel() end)
+		self.ResetNPCModelButton:SetScript("OnEnter",function()
+			GameTooltip:SetOwner(self.ScaleFont, "ANCHOR_TOPRIGHT",20,-75);
+			GameTooltip:SetText(
+				"Deletes the custom settings, and redraws the current NPC model", 1, 1, 1, 1, 1);
+			GameTooltip:Show()
+		end)
+		self.ResetNPCModelButton:SetScript("OnLeave",function() GameTooltip:Hide() end)
 			
 		-- Frame Level
 		
@@ -2127,9 +2199,17 @@ function storyline.UpdateOptions()
 	if  StorylineOptions.EnableModelManip == 0 then
 		storyline.OptionsFrame.ModelManipDebugButton:Hide()
 		storyline.OptionsFrame.ModelManipDebugFont:Hide()
+		storyline.OptionsFrame.ModelManipSaveButton:Hide()
+		storyline.OptionsFrame.ModelManipSaveFont:Hide()
+		storyline.OptionsFrame.ResetPlayerModelButton:Hide()
+		storyline.OptionsFrame.ResetNPCModelButton:Hide()
 	else
 		storyline.OptionsFrame.ModelManipDebugButton:Show()
 		storyline.OptionsFrame.ModelManipDebugFont:Show()
+		storyline.OptionsFrame.ModelManipSaveButton:Show()
+		storyline.OptionsFrame.ModelManipSaveFont:Show()
+		storyline.OptionsFrame.ResetPlayerModelButton:Show()
+		storyline.OptionsFrame.ResetNPCModelButton:Show()
 	end
 end
 
@@ -2634,6 +2714,53 @@ function storyline:ConfigureModelRotation()
 	end
 end
 
+
+function storyline:StoreNPCModel()
+	if (StorylineOptions.EnableModelManipDebug == 1 or StorylineOptions.EnableModelManipSave==1) then
+		Z, X, Y = storyline.NPC.PlayerFrame:GetPosition(Z, X, Y)
+		facing=storyline.NPC.PlayerFrame:GetFacing()
+		model=storyline.NPC.PlayerFrame:GetModel()
+		scale = storyline.NPC.PlayerFrame:GetModelScale()
+		if (StorylineOptions.EnableModelManipSave==1) then
+			UserNPCModels[model]={f=facing,z=Z,y=Y,x=X,s=scale}
+		end
+
+		if (StorylineOptions.EnableModelManipDebug==1) then
+			model = string.gsub(model,"\\","\\\\")
+			DEFAULT_CHAT_FRAME:AddMessage(format('["%s"]={f=%s,z=%s,y=%s,x=%s,s=%s}', model, facing,Z,Y,X,scale))
+		end
+	end
+end
+
+function storyline:StorePlayerModel()
+	if (StorylineOptions.EnableModelManipDebug == 1 or StorylineOptions.EnableModelManipSave==1) then
+		Z, X, Y = storyline.Player.PlayerFrame:GetPosition(Z, X, Y)
+		facing=storyline.Player.PlayerFrame:GetFacing()
+		model=storyline.Player.PlayerFrame:GetModel()
+		scale = storyline.Player.PlayerFrame:GetModelScale()
+		if (StorylineOptions.EnableModelManipSave==1) then
+			UserPlayerModels[model]={f=facing,z=Z,y=Y,x=X,s=scale}
+		end
+
+		if (StorylineOptions.EnableModelManipDebug==1) then
+			model = string.gsub(model,"\\","\\\\")
+			DEFAULT_CHAT_FRAME:AddMessage(format('["%s"]={f=%s,z=%s,y=%s,x=%s,s=%s}', model, facing,Z,Y,X,scale))
+		end
+	end
+end
+
+function storyline:ResetNPCModel()
+	UserNPCModels[storyline.NPC.PlayerFrame:GetModel()] = nil
+	storyline:ResetModels()
+	storyline:UpdateModels()
+end
+
+function storyline:ResetPlayerModel()
+	UserPlayerModels[storyline.Player.PlayerFrame:GetModel()] = nil
+	storyline:ResetModels()
+	storyline:UpdateModels()
+end
+
 function storyline:DisableModelManipulation()
 	--PlayerFrame
 	storyline.Player.PlayerFrame:EnableMouse(0)
@@ -2659,30 +2786,23 @@ function storyline:EnableModelManipulation()
 	--PlayerFrame
 	storyline.Player.PlayerFrame:EnableMouse(1)
 	storyline.Player.PlayerFrame:EnableMouseWheel(1)
-	storyline.Player.PlayerFrame:SetScript('OnMouseWheel', function(self, spining)
+	storyline.Player.PlayerFrame:SetScript('OnMouseWheel', function(self, spining)  --Scroll Wheel Scaling
         --local Z, X, Y = storyline.Player.PlayerFrame:GetPosition()
         --Z = (arg1 > 0 and Z + 1 or Z - 1)
-
 		--storyline.Player.PlayerFrame:SetPosition(Z, X, Y)
+
 		local s = storyline.Player.PlayerFrame:GetModelScale()
         s = (arg1 > 0 and s + 0.01 or s - 0.01)
 		if (StorylineOptions.EnableModelManipDebug == 1) then
 			DEFAULT_CHAT_FRAME:AddMessage(format("Scale: %s",s))
 		end
+		storyline:StorePlayerModel()
 		storyline.Player.PlayerFrame:SetModelScale(s)
     end)
 	
 	storyline.Player.PlayerFrame:SetScript('OnMouseUp', function(self)
         storyline.Player.PlayerFrame:SetScript('OnUpdate', nil)
-		if (StorylineOptions.EnableModelManipDebug == 1) then
-			Z, X, Y = storyline.Player.PlayerFrame:GetPosition(Z, X, Y)
-			facing=storyline.Player.PlayerFrame:GetFacing()
-			model=storyline.Player.PlayerFrame:GetModel()
-			model = string.gsub(model,"\\","\\\\")
-			scale = storyline.Player.PlayerFrame:GetModelScale()
-			--Output for easy model placement
-			DEFAULT_CHAT_FRAME:AddMessage(format('["%s"]={f=%s,z=%s,y=%s,x=%s,s=%s}', model, facing,Z,Y,X,scale))
-		end
+			storyline:StorePlayerModel()
     end)
 	
 	storyline.Player.PlayerFrame:SetScript('OnMouseDown', function()
@@ -2716,7 +2836,7 @@ function storyline:EnableModelManipulation()
 	--NPCFrame
 	storyline.NPC.PlayerFrame:EnableMouse(1)
 	storyline.NPC.PlayerFrame:EnableMouseWheel(1)
-	storyline.NPC.PlayerFrame:SetScript('OnMouseWheel', function(self, spining)
+	storyline.NPC.PlayerFrame:SetScript('OnMouseWheel', function(self, spining) --Scroll Wheel Scaling
         --local Z, X, Y = storyline.NPC.PlayerFrame:GetPosition()
 		-- Z = (arg1 > 0 and Z + 1 or Z - 1)
 		-- storyline.NPC.PlayerFrame:SetPosition(Z, X, Y)
@@ -2726,21 +2846,13 @@ function storyline:EnableModelManipulation()
 		if (StorylineOptions.EnableModelManipDebug == 1 ) then
 			DEFAULT_CHAT_FRAME:AddMessage(format("Scale: %s",s))
 		end
-
+		storyline:StoreNPCModel()
 		storyline.NPC.PlayerFrame:SetModelScale(s)
     end)
 	
 	storyline.NPC.PlayerFrame:SetScript('OnMouseUp', function(self)
         storyline.NPC.PlayerFrame:SetScript('OnUpdate', nil)
-		if (StorylineOptions.EnableModelManipDebug == 1 ) then
-			Z, X, Y = storyline.NPC.PlayerFrame:GetPosition(Z, X, Y)
-			facing=storyline.NPC.PlayerFrame:GetFacing()
-			model=storyline.NPC.PlayerFrame:GetModel()
-			model = string.gsub(model,"\\","\\\\")
-			scale = storyline.NPC.PlayerFrame:GetModelScale()
-			--Output for easy model placement
-			DEFAULT_CHAT_FRAME:AddMessage(format('["%s"]={f=%s,z=%s,y=%s,x=%s,s=%s}', model, facing,Z,Y,X,scale))
-		end
+			storyline:StoreNPCModel()
     end)
 	
 	storyline.NPC.PlayerFrame:SetScript('OnMouseDown', function()
@@ -2772,6 +2884,7 @@ function storyline:EnableModelManipulation()
     end)
 end
 
+
 -- Update 3D Models
 function storyline:UpdateModels()
 	
@@ -2781,11 +2894,16 @@ function storyline:UpdateModels()
 	-- set default players model info
 	storyline.Player.PlayerFrame:SetUnit("player")
 	storyline.Player.PlayerFrame:SetModelScale(1)
-	storyline.Player.PlayerFrame:SetFacing(storyline.Models.PlayerFacing)
 
 	--set model scale if known model. Otherwise default might be fine
 	m = storyline.Models.PlayerModelDB[storyline.Player.PlayerFrame:GetModel()]
-	if (m) then
+	um = UserPlayerModels[storyline.Player.PlayerFrame:GetModel()]
+	if(um) then
+		storyline.Player.PlayerFrame:SetFacing(um.f)
+		storyline.Player.PlayerFrame:SetPosition(um.z, um.x, um.y)
+		storyline.Player.PlayerFrame:SetModelScale(um.s)
+	elseif (m) then --cant seem to set model position, but I might keep trying with the user rotated models
+		storyline.Player.PlayerFrame:SetFacing(storyline.Models.PlayerFacing)
 		storyline.Player.PlayerFrame:SetModelScale(m.s)
 		--storyline.Player.PlayerFrame:SetModelScale(m.s-(StorylineOptions.WindowScale-1)) -- might want to try something to allow window scaling
 	end
@@ -2799,7 +2917,12 @@ function storyline:UpdateModels()
 	-- Most will be covered, defaults might work for anything else
 	local model = storyline.NPC.PlayerFrame:GetModel()
 	m = storyline.Models.NPCModelDB[model]
-	if (m) then
+	um = UserNPCModels[model]
+	if (um) then
+		storyline.NPC.PlayerFrame:SetFacing(um.f)
+		storyline.NPC.PlayerFrame:SetPosition(um.z, um.x, um.y)
+		storyline.NPC.PlayerFrame:SetModelScale(um.s)
+	elseif (m) then
 		storyline.NPC.PlayerFrame:SetFacing(m.f)
 		storyline.NPC.PlayerFrame:SetPosition(m.z, m.x, m.y)
 		storyline.NPC.PlayerFrame:SetModelScale(m.s)

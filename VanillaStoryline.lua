@@ -623,8 +623,8 @@ function storyline.Gossip:ConfigureFrame()
 			self.Frame.Scrollframe.Content.Block[i].Font = self.Frame.Scrollframe.Content.Block[i]:CreateFontString(nil, "OVERLAY")
 					self.Frame.Scrollframe.Content.Block[i].Font:SetPoint("LEFT", 20, 0)
 					self.Frame.Scrollframe.Content.Block[i].Font:SetFont("Fonts\\FRIZQT__.TTF", 12)
-					self.Frame.Scrollframe.Content.Block[i].Font:SetWidth(255)
-					--self.Frame.Scrollframe.Content.Block[i].Font:SetHeight(16)
+					self.Frame.Scrollframe.Content.Block[i].Font:SetWidth(250) --Allows better word wrapping0
+					--self.Frame.Scrollframe.Content.Block[i].Font:SetHeight(16) --Dynamically set instead
 					self.Frame.Scrollframe.Content.Block[i].Font:SetJustifyH("LEFT")
 					self.Frame.Scrollframe.Content.Block[i].Font:SetJustifyV("CENTER")
 					self.Frame.Scrollframe.Content.Block[i].Font:SetText("TEST")

@@ -103,7 +103,7 @@ function storyline:OnEvent()
 			StorylineOptions.HideBlizzardFrames = 1
 			StorylineOptions.TextSpeed = 2
 			StorylineOptions.WindowScale = 1
-			StorylineOptions.WindowLevel = 4
+			StorylineOptions.WindowLevel = 6
 			StorylineOptions.FontSize = 14
 			StorylineOptions.EnableModelManip = 0
 			StorylineOptions.InstantRewards = 0
@@ -122,7 +122,7 @@ function storyline:OnEvent()
 
 		-- compability to old version
 		if not StorylineOptions.WindowScale then StorylineOptions.WindowScale = 1 end
-		if not StorylineOptions.WindowLevel then StorylineOptions.WindowLevel = 4 end
+		if not StorylineOptions.WindowLevel then StorylineOptions.WindowLevel = 6 end 
 		if not StorylineOptions.FontSize then StorylineOptions.FontSize = 14 end
 		if not StorylineOptions.EnableModelManip then StorylineOptions.EnableModelManip = 0 end
 		if not StorylineOptions.InstantRewards then StorylineOptions.InstantRewards = 0 end
@@ -1850,7 +1850,7 @@ function storyline.OptionsFrame:ConfigureFrame()
 		 self.MoveButton:SetScript("OnEnter",function()
 				GameTooltip:SetOwner(self.MoveFont, "ANCHOR_TOPRIGHT",20,-80);
 				GameTooltip:SetText(
-					"Allows moving the window around. Model manipulation interferes with this somewhat, you'll need to click higher if both are enabled. Do /storyline reset if moved out of bounds by accident.", 1, 1, 1, 1, 1);
+					"Allows moving the window around. If Model Manipulation is enabled, you'll need to click borders. Do /storyline reset if moved out of bounds by accident.", 1, 1, 1, 1, 1);
 				GameTooltip:Show()
 				end)
 		 self.MoveButton:SetScript("OnLeave",function() GameTooltip:Hide() end)
